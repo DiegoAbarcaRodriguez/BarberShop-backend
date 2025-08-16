@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException, NotFound
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { BcryptAdapter, UUIDAdapter } from 'src/common/config';
 import { EmailService } from 'src/common/services/email.service';
 import { CreateUserDto, LoginDto, UpdatePasswordDto } from './dto/auth';
@@ -54,11 +54,8 @@ export class AuthService {
 
       await this.emailService.generateEmailContent({ to: email, name: first_name + ' ' + last_name, token, id });
 
-
-
       return {
-        ok: true,
-        user: userCreated
+        ok: true
       }
 
     } catch (error) {
@@ -92,7 +89,8 @@ export class AuthService {
 
       return {
         ok: true,
-        token
+        token,
+        userName: existingUser.first_name + ' ' + existingUser.last_name
       }
 
     } catch (error) {
@@ -179,5 +177,31 @@ export class AuthService {
     }
   }
 
+
+  async getUserByEmail(email: string) {
+    try {
+      const existingUser = await this.userRepository.findOne({ where: { email } });
+
+      if (existingUser) throw new BadRequestException(`The user with email: ${email} has already exist!`);
+
+      return { ok: true };
+    } catch (error) {
+
+      if (error.status === 400) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async validateSessionStatus() {
+    try {
+      return { ok: true };
+
+    } catch (error) {
+      this._handleErrors(error);
+    }
+  }
 
 }

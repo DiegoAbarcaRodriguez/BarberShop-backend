@@ -30,7 +30,7 @@ export class EmailService {
         <html>
             <p><strong>Hi "${name}"</strong> you've created your account on BarShop App,
                  now you just have to confirm it by clicking on the following link</p>
-            <p>Click on here: <a href='http://localhost:4200/confirmar-cuenta?token=${token}&id=${id}'>Confirm account</a></p>
+            <p>Click on here: <a href='http://localhost:4200/confirm-account?token=${token}&id=${id}'>Confirm account</a></p>
             <p>If you do not require it, you can ignore the message.</p>
         </html>
         `

@@ -20,7 +20,10 @@ import { ServiceAppointmentModule } from './serving-appointment/service-appointm
       database: process.env.DB_NAME,
       entities: [],
       synchronize: true,
-      autoLoadEntities: true
+      autoLoadEntities: true,
+      extra: {
+        options: '-c timezone=America/Mexico_City'
+      }
     }),
 
     AuthModule,

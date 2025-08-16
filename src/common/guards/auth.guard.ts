@@ -49,8 +49,13 @@ export class AuthGuard implements CanActivate {
       request['user'] = existingUser;
       return true;
     } catch (error) {
+      console.log(error)
       if (error.status == 401) {
         throw error;
+      }
+
+      if (error.name === 'TokenExpiredError') {
+        throw new UnauthorizedException('The session has expired!');
       }
 
       throw new InternalServerErrorException();

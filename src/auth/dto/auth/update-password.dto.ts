@@ -3,7 +3,7 @@ import { IsString, Matches } from "class-validator";
 export class UpdatePasswordDto {
 
     @IsString()
-    @Matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d\W]{10}$/, { message: 'The password is not a valid expression!' })
+    @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@!?\[\]&%$#\-_])[A-Za-z\d@!?\[\]&%$#\-_]{8,}$/, { message: 'The password is not a valid expression!' })
     password: string;
 
 }

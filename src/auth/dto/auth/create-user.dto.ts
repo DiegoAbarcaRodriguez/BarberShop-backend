@@ -15,21 +15,12 @@ export class CreateUserDto {
     email: string;
 
     @IsString()
-    @Matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d\W]{10}$/, { message: 'The password is not a valid expression!' })
+    @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@!?\[\]&%$#\-_])[A-Za-z\d@!?\[\]&%$#\-_]{8,}$/, { message: 'The password is not a valid expression!' })
     password: string;
 
     @IsString()
     @Matches(/^\d{10}$/, { message: 'The phone is not valid!' })
     phone: string;
 
-    @IsBoolean()
-    isAdmin: boolean;
-
-    @IsBoolean()
-    isConfirmed: boolean;
-
-    @IsString()
-    @MinLength(36)
-    token: string;
 
 }

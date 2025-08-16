@@ -1,7 +1,9 @@
-import { Controller, Post, Body, Patch, Param, Req, HttpCode } from '@nestjs/common';
+import { Controller, Post, Body, Patch, Param, Req, HttpCode, Get, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UuidPipe } from 'src/common/pipes/uuid/uuid.pipe';
 import { CreateUserDto, LoginDto, RecoverPasswordDto, UpdatePasswordDto } from './dto/auth';
+import { EmailPipe } from 'src/common/pipes/email/email.pipe';
+import { AuthGuard } from 'src/common/guards/auth.guard';
 
 
 
@@ -42,4 +44,15 @@ export class AuthController {
     return this.authService.updatePassword(id, req.token, updatePasswordDto);
   }
 
+
+  @Get('get-user/:email')
+  getUserByEmail(@Param('email', EmailPipe) email: string) {
+    return this.authService.getUserByEmail(email);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('validate-session')
+  validateUserSession() {
+    return this.authService.validateSessionStatus();
+  }
 }

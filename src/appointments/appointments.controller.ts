@@ -17,9 +17,15 @@ export class AppointmentsController {
     return this.appointmentsService.create(req.user, createAppointmentDto);
   }
 
+  @UseGuards(AuthGuard)
+  @Get('get-one')
+  getExitingAppointment(@Query('date') date?: string, @Query('time') time?: string) {
+    return this.appointmentsService.findExistingAppointment(date, time);
+  }
+
   @UseGuards(AuthAdminGuard)
   @Get()
-  findAll(@Query('date') date?: Date) {
+  findAll(@Query('date') date?: string) {
     return this.appointmentsService.findAll(date);
   }
 

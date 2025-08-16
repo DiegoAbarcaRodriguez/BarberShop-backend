@@ -1,5 +1,5 @@
 import { Appointment } from "src/appointments/entities/appointment.entity";
-import { Column, Entity, OneToMany } from "typeorm";
+import { BeforeInsert, Column, Entity, OneToMany } from "typeorm";
 
 
 @Entity()
@@ -39,6 +39,11 @@ export class User {
         { eager: true }
     )
     appointments: Appointment[];
+
+    @BeforeInsert()
+    normalizeEmail() {
+        this.email = this.email.toLocaleLowerCase().trim();
+    }
 
 
 }

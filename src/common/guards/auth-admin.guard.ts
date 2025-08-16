@@ -54,6 +54,11 @@ export class AuthAdminGuard implements CanActivate {
         throw error;
       }
 
+
+      if (error.name === 'TokenExpiredError') {
+        throw new UnauthorizedException('The session has expired!');
+      }
+
       throw new InternalServerErrorException();
     }
 

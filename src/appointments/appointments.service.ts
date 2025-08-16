@@ -25,7 +25,7 @@ export class AppointmentsService {
       });
 
       if (existingAppointmet) {
-        throw new BadRequestException('The date and time has been booked!');
+        throw new BadRequestException('The date and time has been already booked!');
       }
 
       const schemaAppointment = await this.appointmentRepository.create(
@@ -33,7 +33,6 @@ export class AppointmentsService {
           ...createAppointmentDto,
           user_fk: user
         });
-
 
       const createdAppointment = await this.appointmentRepository.save(schemaAppointment);
 
@@ -59,7 +58,7 @@ export class AppointmentsService {
     }
   }
 
-  async findAll(date: Date) {
+  async findAll(date: string) {
     try {
       const appointments = date ? await this.appointmentRepository.find({
         where: { date }
@@ -79,6 +78,30 @@ export class AppointmentsService {
     }
   }
 
+  async findExistingAppointment(date: string, time: string) {
+    try {
+
+      const exitingAppointment = await this.appointmentRepository.findOne(
+        {
+          where: {
+            date,
+            time
+          }
+        });
+
+      if (exitingAppointment) {
+        throw new BadRequestException('There is an appointment already reserved!');
+      }
+
+      return { ok: true };
+    } catch (error) {
+      console.log(error);
+      if (error.status === 400) throw error;
+
+      throw new InternalServerErrorException();
+    }
+  }
+
   async remove(id: string) {
     try {
 
@@ -88,7 +111,7 @@ export class AppointmentsService {
         throw new NotFoundException('Appointment was not found!');
       }
 
-      await this.appointmentRepository.delete(existingAppointment);
+      await this.appointmentRepository.delete(existingAppointment as any);
 
       return {
         ok: true
