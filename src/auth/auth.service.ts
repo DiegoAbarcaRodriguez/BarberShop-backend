@@ -195,13 +195,5 @@ export class AuthService {
     }
   }
 
-  async validateSessionStatus() {
-    try {
-      return { ok: true };
-
-    } catch (error) {
-      this._handleErrors(error);
-    }
-  }
 
 }

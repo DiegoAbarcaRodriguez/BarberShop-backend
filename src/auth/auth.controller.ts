@@ -4,6 +4,7 @@ import { UuidPipe } from 'src/common/pipes/uuid/uuid.pipe';
 import { CreateUserDto, LoginDto, RecoverPasswordDto, UpdatePasswordDto } from './dto/auth';
 import { EmailPipe } from 'src/common/pipes/email/email.pipe';
 import { AuthGuard } from 'src/common/guards/auth.guard';
+import { AuthAdminGuard } from 'src/common/guards/auth-admin.guard';
 
 
 
@@ -53,6 +54,12 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Get('validate-session')
   validateUserSession() {
-    return this.authService.validateSessionStatus();
+    return { ok: true }
+  }
+
+  @UseGuards(AuthAdminGuard)
+  @Get('admin-status')
+  validateAdminStatus() {
+    return { ok: true };
   }
 }
