@@ -2,14 +2,14 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 
 import { ServiceAppointmentService } from './service-appointment.service';
 import { CreateServiceAppointmentDto } from './dto/create-service-appointment.dto';
-import { AuthAdminGuard } from 'src/common/guards/auth-admin.guard';
+import { AuthGuard } from 'src/common/guards/auth.guard';
 
 @Controller('service-appointment')
 export class ServiceAppointmentController {
   constructor(private readonly serviceAppointmentService: ServiceAppointmentService) { }
 
 
-  @UseGuards(AuthAdminGuard)
+  @UseGuards(AuthGuard)
   @Post()
   create(@Body() createServiceAppointmentDto: CreateServiceAppointmentDto) {
     return this.serviceAppointmentService.create(createServiceAppointmentDto);
