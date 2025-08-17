@@ -20,7 +20,8 @@ export class Appointment {
 
     @ManyToOne(
         () => User,
-        (user) => user.appointments
+        (user) => user.appointments,
+        { eager: true }
     )
     user_fk: User;
 

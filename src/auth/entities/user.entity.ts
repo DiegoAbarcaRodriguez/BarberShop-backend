@@ -35,8 +35,7 @@ export class User {
 
     @OneToMany(
         () => Appointment,
-        (appointment) => appointment.user_fk,
-        { eager: true }
+        (appointment) => appointment.user_fk
     )
     appointments: Appointment[];
 

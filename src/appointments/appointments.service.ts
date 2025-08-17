@@ -4,6 +4,7 @@ import { Appointment } from './entities/appointment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/auth/entities/user.entity';
 import { CreateAppointmentDto } from './dto/create-appointment.dto';
+import { ServiceAppointment } from 'src/serving-appointment/entities/service-appointment.entity';
 
 
 @Injectable()
@@ -11,7 +12,9 @@ export class AppointmentsService {
 
   constructor(
     @InjectRepository(Appointment)
-    private appointmentRepository: Repository<Appointment>
+    private appointmentRepository: Repository<Appointment>,
+    @InjectRepository(ServiceAppointment)
+    private servingAppointmentRepository: Repository<ServiceAppointment>
   ) { }
 
   async create(user: User, createAppointmentDto: CreateAppointmentDto) {
@@ -60,16 +63,37 @@ export class AppointmentsService {
 
   async findAll(date: string) {
     try {
-      const appointments = date ? await this.appointmentRepository.find({
-        where: { date }
+
+
+      const appointments = date ? await this.servingAppointmentRepository.find({
+        where: {
+          appointment_fk: {
+            date
+          }
+        },
+        relations: {
+          appointment_fk: true,
+          service_fk: true
+        }
       })
-        : await this.appointmentRepository.find({
-          order: { date: 'DESC' }
+        : await this.servingAppointmentRepository.find({
+          relations: {
+            appointment_fk: true,
+            service_fk: true
+          },
+          order: {
+            appointment_fk: {
+              date: 'DESC'
+            }
+          }
         });
+
+      const appointmentsMap = this._mapperServicesAppointmentRecords(appointments);
+
 
       return {
         ok: true,
-        appointments
+        appointments: Object.fromEntries(appointmentsMap)
       };
 
     } catch (error) {
@@ -128,5 +152,29 @@ export class AppointmentsService {
 
       throw new InternalServerErrorException();
     }
+  }
+
+  private _mapperServicesAppointmentRecords(appointments: ServiceAppointment[]) {
+    const appointmentsMap = new Map();
+
+    appointments.forEach(({ appointment_fk, service_fk }) => {
+      const { id, ...appointment } = appointment_fk;
+
+      if (appointmentsMap.has(id)) {
+        appointmentsMap.set(id, {
+          ...appointmentsMap.get(id),
+          services: [...appointmentsMap.get(id).services, service_fk]
+        });
+
+      } else {
+        appointmentsMap.set(id, {
+          appointment,
+          services: [service_fk]
+        });
+      }
+
+    });
+
+    return appointmentsMap;
   }
 }
