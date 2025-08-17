@@ -93,7 +93,7 @@ export class AppointmentsService {
 
       return {
         ok: true,
-        appointments: Object.fromEntries(appointmentsMap)
+        appointments: appointmentsMap
       };
 
     } catch (error) {
@@ -157,8 +157,8 @@ export class AppointmentsService {
   private _mapperServicesAppointmentRecords(appointments: ServiceAppointment[]) {
     const appointmentsMap = new Map();
 
-    appointments.forEach(({ appointment_fk, service_fk }) => {
-      const { id, ...appointment } = appointment_fk;
+    appointments.forEach(({ appointment_fk, service_fk }, index) => {
+      const { id } = appointment_fk;
 
       if (appointmentsMap.has(id)) {
         appointmentsMap.set(id, {
@@ -168,13 +168,13 @@ export class AppointmentsService {
 
       } else {
         appointmentsMap.set(id, {
-          appointment,
+          appointment: appointment_fk,
           services: [service_fk]
         });
       }
 
     });
 
-    return appointmentsMap;
+    return [...appointmentsMap.values()];
   }
 }
